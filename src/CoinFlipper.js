@@ -1,62 +1,57 @@
-import React, { Component } from 'react'
-import Coin from './Coin';
-import './CoinFlipper.css';
-import options from "./consants";
-import {getRandomElFormArr, findCountInArray} from "./helpers";
+import React, { Component } from "react";
+import Coin from "./Coin";
+import "./CoinFlipper.css";
 
 class CoinFlipper extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-        side: options[0],
-        donuyor: false,
-        gelenler: []
-    }
+      side: "tura",
+      donuyor: false,
+      turn: 0,
+      tura: 0,
+      yazi: 0
+    };
+    this.handleClick = this.handleClick.bind(this);
   }
   handleClick = () => {
-    this.setState({donuyor: true});
-    const randomEl = getRandomElFormArr(options);
-    setTimeout(() => this.setState({donuyor: false}, () => {
+    let random = Math.floor(Math.random() * 2);
+    this.setState({
+      side: random === 1 ? "tura" : "yazi",
+      donuyor: true,
+      turn: this.state.turn + 1,
+      
+    }, () => {
         this.setState({
-            side: randomEl,
-            gelenler: [...this.state.gelenler].concat([randomEl])
+          tura:
+            this.state.side === "tura" ? this.state.tura + 1 : this.state.tura,
+          yazi:
+            this.state.side === "yazi" ? this.state.yazi + 1 : this.state.yazi
         });
-    }), 1000);
+      });
+    setTimeout(() => this.setState({ donuyor: false }), 1000);
   };
 
-  render(){
+  render() {
     return (
       <div className="CoinFlipper">
-        <h1>
-            {
-                options.map((option) => {
-                    if(options[options.length -1] === option){
-                        return <span> {option} </span>
-                    }else {
-                        return <span>{option} ya da</span>
-                    }
-                })
-            }
-        </h1>
+        <h1>Yazı mı Tura mı?</h1>
         <Coin side={this.state.side} donuyor={this.state.donuyor} />
-        <button onClick={this.handleClick} >At!</button>
+        <button onClick={this.handleClick}>At!</button>
+        <h2 style={{ textTransform: "capitalize" }}>
+          {" "}
+          Sonuç: {this.state.side}
+        </h2>
         <p>
-            Toplam
-            <strong> {this.state.gelenler.length} </strong>
-            atıştan
-            <div>
-                {
-                    options.map(option => {
-                        return <div key={option}>
-                        {findCountInArray(this.state.gelenler, option)}
-                        <span> {option} </span>
-                    </div>
-                    })
-                }
-            </div>
+          Toplam
+          <strong> {this.state.turn} </strong>
+          atıştan
+          <strong> {this.state.tura} </strong> tura
+          <strong> {this.state.yazi} </strong>
+          yazı geldi.
         </p>
       </div>
-    )
+    );
   }
 }
 
